@@ -1,4 +1,5 @@
 import { logInfo } from '../utils/logger';
+import { expect } from '@playwright/test';
 
 export class Mainpage {
     constructor(page, logger = null) {
@@ -12,15 +13,30 @@ export class Mainpage {
         }
     }
 
-    async navigateTo(url) {
-        this.log(`Navigating to ${url}`);
-        await this.page.goto(url);
-    }
-
     async openSearchModal() {
         this.log('Opening search modal...');
         const searchButton = this.page.locator('[data-testid="search-button"]');
+        await expect(searchButton).toBeVisible(); // Ensure button is visible
         await searchButton.click();
+        const modal = this.page.locator('[data-testid="search-container"]');
+        await expect(modal).toBeVisible(); // Ensure modal is fully opened
+        this.log('Search modal opened.');
+    }
+
+    async closeSearchModal() {
+        this.log('Closing search modal...');
+        const closeButton = this.page.locator('[data-testid="close-modal"]');
+        await expect(closeButton).toBeVisible(); // Ensure button is visible
+        await closeButton.click();
+        const modal = this.page.locator('[data-testid="search-container"]');
+        await modal.waitFor({ state: 'hidden', timeout: 5000 }); // Ensure modal is closed
+        this.log('Search modal closed.');
+    }
+
+    async closeSearchModal() {
+        this.log('Closing search modal...');
+        const closeButton = this.page.locator('[data-testid="close-modal"]');
+        await closeButton.click();
     }
 
     async fillSearchInput(term) {
@@ -52,5 +68,10 @@ export class Mainpage {
         const matchText = await matchContainer.textContent();
         this.log(`Extracted match text at index ${index}: ${matchText}`);
         return matchText;
+    }
+
+    async navigateTo(page) {
+        this.log(`Navigating to ${page}`);
+        await this.page.goto(page);
     }
 }

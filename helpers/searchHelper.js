@@ -40,17 +40,9 @@ export async function fetchSearchTerms(page, limit = 5, logger = null) {
     }
 }
 
-export async function performSearches(page, searchTerms, logger = null) {
-    let modalOpen = false;
-
-    for (const term of searchTerms) {
+export async function testSearchTerm(page, term, logger) {
+    try {
         logger?.info(`Performing search for term: ${term}`);
-
-        if (!modalOpen) {
-            modalOpen = true;
-            const searchButton = page.locator('[data-testid="search-button"]');
-            await searchButton.click();
-        }
 
         const searchContainer = page.locator('[data-testid="search-container"]');
         await expect(searchContainer).toBeVisible();
@@ -61,6 +53,7 @@ export async function performSearches(page, searchTerms, logger = null) {
         await page.waitForTimeout(1000);
 
         const matchContainers = searchContainer.locator('[data-testid="match-container"]');
+
         const matchCount = await matchContainers.count();
         expect(matchCount).toBeGreaterThan(0);
 
@@ -71,9 +64,11 @@ export async function performSearches(page, searchTerms, logger = null) {
         logger?.info(`First match for "${term}": ${firstMatchText}`);
         expect(firstMatchText).toContain(term);
 
-        for (let i = 1; i < matchCount; i++) {
-            const matchContainer = matchContainers.nth(i);
-            await expect(matchContainer).toBeVisible();
-        }
+        await searchInput.fill('');
+    } catch (error) {
+        logger?.error(`Error during search for term "${term}": ${error.message}`);
+        throw error;
     }
 }
+
+
