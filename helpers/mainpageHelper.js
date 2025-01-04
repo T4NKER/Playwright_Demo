@@ -16,11 +16,19 @@ export class Mainpage {
     async openSearchModal() {
         this.log('Opening search modal...');
         const searchButton = this.page.locator('[data-testid="search-button"]');
-        await expect(searchButton).toBeVisible(); // Ensure button is visible
+        await expect(searchButton).toBeVisible(); 
         await searchButton.click();
         const modal = this.page.locator('[data-testid="search-container"]');
-        await expect(modal).toBeVisible(); // Ensure modal is fully opened
+        await expect(modal).toBeVisible(); 
         this.log('Search modal opened.');
+    }
+
+    async refuseCookies() {
+        this.log('Refusing cookies...');
+        const refuseCookieButton = this.page.locator('#CybotCookiebotDialogBodyButtonDecline');
+        await refuseCookieButton.waitFor({ state: 'visible' }); // Wait until the button is visible
+        await refuseCookieButton.click(); // Click the button
+        this.log('Cookies refused.');
     }
 
     async closeSearchModal() {

@@ -7,7 +7,7 @@ export async function waitForMatchContainers(page, logger = null) {
     logger?.info('Match containers are visible.');
 }
 
-export async function fetchSearchTerms(page, limit = 5, logger = null) {
+export async function getMatches(page, limit = 5, logger = null) {
     try {
         logger?.info(`Fetching up to ${limit} search terms...`);
         const homepageMatchContainers = page.locator('[data-testid="match-container"]');
@@ -40,7 +40,21 @@ export async function fetchSearchTerms(page, limit = 5, logger = null) {
     }
 }
 
-export async function testSearchTerm(page, term, logger) {
+export async function getLeagues(page, limit = 5, logger = null) {
+    const leagueElements = page.locator('a[data-router="ignore"]');
+    const leagueCount = await leagueElements.count();
+    let leagueNames = [];
+
+    for (let i = 0; i < leagueCount; i++) {
+        const league = leagueElements.nth(i);
+        const leagueName = await league.locator('span:nth-of-type(2)').nth(1).textContent();
+        leagueNames.push(leagueName.trim());
+    }
+    logger?.info(`Extracted League Names: ${leagueNames}`);
+    return leagueNames;
+}
+
+export async function testSearchTerm(page, term, logger, expectMatches = true) {
     try {
         logger?.info(`Performing search for term: ${term}`);
 
@@ -50,19 +64,26 @@ export async function testSearchTerm(page, term, logger) {
         const searchInput = page.locator('[data-testid="search-input"]');
         await searchInput.fill(term);
 
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(1250);
 
         const matchContainers = searchContainer.locator('[data-testid="match-container"]');
 
         const matchCount = await matchContainers.count();
-        expect(matchCount).toBeGreaterThan(0);
+        logger?.info(`Match count for "${term}": ${matchCount}`);
 
-        const firstMatchContainer = matchContainers.first();
-        await expect(firstMatchContainer).toBeVisible();
+        if (expectMatches) {
+            expect(matchCount).toBeGreaterThan(0);
 
-        const firstMatchText = await firstMatchContainer.textContent();
-        logger?.info(`First match for "${term}": ${firstMatchText}`);
-        expect(firstMatchText).toContain(term);
+            const firstMatchContainer = matchContainers.first();
+            await expect(firstMatchContainer).toBeVisible();
+
+            const firstMatchText = await firstMatchContainer.textContent();
+            logger?.info(`First match for "${term}": ${firstMatchText}`);
+            expect(firstMatchText).toContain(term);
+        } else {
+            expect(matchCount).toBe(0); 
+            logger?.info(`No matches found for term "${term}", as expected.`);
+        }
 
         await searchInput.fill('');
     } catch (error) {
@@ -70,5 +91,6 @@ export async function testSearchTerm(page, term, logger) {
         throw error;
     }
 }
+
 
 

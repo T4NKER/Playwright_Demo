@@ -28,9 +28,9 @@ module.exports = defineConfig({
     baseURL: 'epicbet.com',
     video: 'on',
     screenshot: 'only-on-failure',
+    trace: 'on',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
   },
 
   /* Configure projects for major browsers */
@@ -40,7 +40,7 @@ module.exports = defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
 
-    /* {
+     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
@@ -48,7 +48,7 @@ module.exports = defineConfig({
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-    }, */
+    }, 
 
     /* Test against mobile viewports. */
     // {
