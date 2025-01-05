@@ -10,7 +10,7 @@ test.describe('Epicbet search functionality tests', () => {
     test.beforeAll(() => {
         logger = new Logger('debug');
     });
-    // added comment for test
+    
     test.beforeEach(async ({ page }) => {
         mainPage = new Mainpage(page, logger);
         await mainPage.navigateTo('https://epicbet.com/en/');
