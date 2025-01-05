@@ -46,7 +46,7 @@ test.describe('Epicbet search functionality tests', () => {
         logger?.info('Spotlight bet tested.');
     });
 
-    test.only('Make combobet', async ({ page }, testInfo) => {
+    test('Make combobet', async ({ page }, testInfo) => {
         testInfo.setTimeout(120000); 
         logger?.info('Starting combobet test...');
 

@@ -72,7 +72,6 @@ export async function testSearchTerm(page, term, logger, expectMatches = true) {
         const searchInput = page.getByTestId('search-input');
         await searchInput.fill(term);
 
-        // Wait dynamically for a match container with the term in its textContent
         const matchContainers = searchContainer.getByTestId('match-container');
         if (expectMatches) {
             logger?.debug(`Waiting for a match container with the term "${term}"...`);
@@ -99,7 +98,6 @@ export async function testSearchTerm(page, term, logger, expectMatches = true) {
             logger?.info(`No matches found for term "${term}", as expected.`);
         }
 
-        // Clear the search input
         await searchInput.fill('');
     } catch (error) {
         logger?.error(`Error during search for term "${term}": ${error.message}`);
