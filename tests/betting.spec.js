@@ -16,12 +16,11 @@ test.describe('Epicbet search functionality tests', () => {
     test.beforeEach(async ({ page }) => {
         mainPage = new Mainpage(page, logger);
         await mainPage.navigateTo('https://epicbet.com/en/');
-        await mainPage.refuseCookies();
-        await mainPage.waitForMatchContainers();
         await page.waitForLoadState('domcontentloaded');
     });
 
-    test('Spotlight bet testing', async ({ page }) => {
+    test('Spotlight bet testing', async ({ page }, testInfo) => {
+        testInfo.setTimeout(60000)
         logger?.info('Spotlight bet testing...');
 
         await interactWithSpotlight(page, logger);

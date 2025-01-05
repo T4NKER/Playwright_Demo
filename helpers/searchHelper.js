@@ -92,6 +92,10 @@ export async function testSearchTerm(page, term, logger, expectMatches = true) {
             logger?.info(`First match for "${term}": ${firstMatchText}`);
             expect(firstMatchText).toContain(term);
         } else {
+            logger?.debug(`Waiting for previous search results to clear...`);
+
+            await expect(matchContainers).toHaveCount(0, { timeout: 10000 });
+
             logger?.debug(`Checking that no matches are found for term "${term}"...`);
             const matchCount = await matchContainers.count();
             expect(matchCount).toBe(0);

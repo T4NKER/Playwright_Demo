@@ -37,7 +37,7 @@ export class Mainpage {
         await expect(closeButton).toBeVisible(); // Ensure button is visible
         await closeButton.click();
         const modal = this.page.getByTestId('search-container');
-        await modal.waitFor({ state: 'hidden', timeout: 5000 }); // Ensure modal is closed
+        await modal.waitFor({ state: 'hidden', timeout: 10000 }); // Ensure modal is closed
         this.log('Search modal closed.');
     }
 
@@ -81,5 +81,7 @@ export class Mainpage {
     async navigateTo(page) {
         this.log(`Navigating to ${page}`);
         await this.page.goto(page);
+        await this.refuseCookies();
+        await this.waitForMatchContainers();
     }
 }

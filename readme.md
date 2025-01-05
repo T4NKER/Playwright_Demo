@@ -52,6 +52,6 @@ Adjust the log level in search.spec.js as needed:
 ##### Platform bugs
 Some leagues like NBA, Ligue 1, and La Liga do not appear in search results. This is a platform-level bug.
 
-##### Dynamic Element Handling:
+#### Additional remarks
 
-Use waitFor and timeout configurations to ensure all elements are fully loaded before interaction. There is a workaround related to that in searchHelper.js. It includes page.waitForTimeout of one second to accomodate search results loading time. __This should be fixed__.
+I tested with chromium, webkit and mozilla and the increased timeouts that I have done for some tests are purely because of webkit. It rendered the page for so long I doubled the timeout. Else I think it should work. It worked best on chromium.
