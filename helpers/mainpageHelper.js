@@ -26,25 +26,19 @@ export class Mainpage {
     async refuseCookies() {
         this.log('Refusing cookies...');
         const refuseCookieButton = this.page.locator('#CybotCookiebotDialogBodyButtonDecline');
-        await refuseCookieButton.waitFor({ state: 'visible' }); // Wait until the button is visible
-        await refuseCookieButton.click(); // Click the button
+        await refuseCookieButton.waitFor({ state: 'visible' }); 
+        await refuseCookieButton.click(); 
         this.log('Cookies refused.');
     }
 
     async closeSearchModal() {
         this.log('Closing search modal...');
         const closeButton = this.page.getByTestId('close-modal');
-        await expect(closeButton).toBeVisible(); // Ensure button is visible
+        await expect(closeButton).toBeVisible(); 
         await closeButton.click();
         const modal = this.page.getByTestId('search-container');
-        await modal.waitFor({ state: 'hidden', timeout: 10000 }); // Ensure modal is closed
+        await modal.waitFor({ state: 'hidden', timeout: 10000 }); 
         this.log('Search modal closed.');
-    }
-
-    async closeSearchModal() {
-        this.log('Closing search modal...');
-        const closeButton = this.page.getByTestId('close-modal');
-        await closeButton.click();
     }
 
     async fillSearchInput(term) {
