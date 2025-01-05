@@ -51,15 +51,16 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const pusher = context.payload.pusher.name;
-          const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-          const reportPath = `https://github.com/${context.repo.owner}/${context.repo.repo}/suites/${context.runId}/artifacts`;
+           const pusher = context.payload.pusher.name;
+           const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+           const reportPath = `https://github.com/${context.repo.owner}/${context.repo.repo}/suites/${context.runId}/artifacts`;
 
-          await github.repos.createCommitComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            commit_sha: context.sha,
-            body: `🚨 **Playwright Tests Failed**\n\nHi @${pusher},\n\nSome tests failed for the files you pushed. Please review the [Playwright Report](${reportPath}) or the [Workflow Run](${runUrl}).`
-          });
+           // Use Octokit to create a commit comment
+           await github.rest.repos.createCommitComment({
+             owner: context.repo.owner,
+             repo: context.repo.repo,
+             commit_sha: context.sha,
+             body: `🚨 **Playwright Tests Failed**\n\nHi @${pusher},\n\nSome tests failed for the files you pushed. Please review the [Playwright Report](${reportPath}) or the [Workflow Run](${runUrl}).`
+           });
 
 
