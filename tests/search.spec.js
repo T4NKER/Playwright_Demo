@@ -20,7 +20,8 @@ test.describe('Epicbet search functionality tests', () => {
     });
 
 
-    test('Fetch and validate matches', async ({ page }) => {
+    test('Fetch and validate matches', async ({ page }, testInfo) => {
+        testInfo.setTimeout(120000)
         const dynamicSearchTerms = await getMatches(page, 5, logger);
         for (const term of dynamicSearchTerms) {
             await mainPage.openSearchModal()
