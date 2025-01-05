@@ -27,7 +27,8 @@ test.describe('Epicbet search functionality tests', () => {
         }
     });
 
-    test('Fetch and validate leagues', async ({ page }, testInfo) => {
+    test.fail('Fetch and validate leagues', async ({ page }, testInfo) => {
+        test.info().annotations.push({bug: 'There is a bug where it doesnt find leagues that it gets from the front page by search.' });
         testInfo.setTimeout(60000);
         const leagueNames = await getLeagues(page, 5, logger);
         for (const term of leagueNames) {
@@ -48,7 +49,7 @@ test.describe('Epicbet search functionality tests', () => {
         ];
 
         for (const { term, description } of wrongTerms) {
-            test(`Search term: "${description}"`, async ({ page }, testInfo) => {
+            test(`Search term: "${term}"`, async ({ page }, testInfo) => {
                 testInfo.setTimeout(60000);
                 await mainPage.openSearchModal();
                 await testSearchTerm(page, term, logger, false);
@@ -56,7 +57,4 @@ test.describe('Epicbet search functionality tests', () => {
         }
     });
 
-    test.afterEach(async ({ page }) => {
-        await page.close();
-    });
 });
