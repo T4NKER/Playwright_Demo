@@ -9,6 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_DOCKER_OPTIONS: "--dns=8.8.8.8"
+      AWS_DEFAULT_REGION: eu-north-1  
+      TZ: Europe/Tallinn
 
     steps:
     - uses: actions/checkout@v4
@@ -17,7 +21,12 @@ jobs:
       run: docker build -t playwright-tests .
 
     - name: Run Playwright Tests in Docker
-      run: docker run --rm playwright-tests
+      run: |
+        docker run --rm \
+          -e TZ=$TZ \
+          -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION \
+          --dns 8.8.8.8 \
+          playwright-tests
 
     - uses: actions/upload-artifact@v4
       if: ${{ always() }}
