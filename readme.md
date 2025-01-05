@@ -39,6 +39,8 @@ To ensure that league names displayed on the homepage appear correctly in the se
 Some leagues, such as NBA, Ligue 1, and La Liga, do not appear in search results. This is a known bug with the platform.
 Only certain leagues, like Euroleague and Premier League, consistently pass the test.
 
+Regarding the CI/CD the test suite does not run because it says that the region was blocked. This is probably due to Github Actions region and I didn't find a valid solution for that. 
+
 ### Logger
 A custom logger that lets you log based on level. For example 2 is info which is meant for test environments and shows additional info that is good for testing purposes.
 
@@ -55,3 +57,6 @@ Some leagues like NBA, Ligue 1, and La Liga do not appear in search results. Thi
 #### Additional remarks
 
 I tested with chromium, webkit and mozilla and the increased timeouts that I have done for some tests are purely because of webkit. It rendered the page for so long I doubled the timeout. Else I think it should work. It worked best on chromium.
+
+Please note that this is a basic test suite and does not cover all the edge cases and possibilities. It's recommended to run the tests in different browsers and environments to ensure compatibility.
+
