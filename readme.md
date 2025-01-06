@@ -1,82 +1,122 @@
 # Test Suite Overview
-The test suite focuses on two key functionalities:
 
-Search functionality based on the matches and leagues and terms that should fail to return results.
+## Introduction
+This test suite automates key functionalities of the EpicBet platform using Playwright. It focuses on ensuring the reliability of search and betting functionalities across multiple environments.
 
-Betting functionality for the spotlight bet and the combobet.
+## Table of Contents
+ [Tests](#tests)
+   - [Fetch and Validate Matches](#1-fetch-and-validate-matches)
+   - [Fetch and Validate Leagues](#2-fetch-and-validate-leagues)
+   - [Betting](#3-betting)
+[Logger](#logger)
+
+ [Known Issues](#known-issues)
+
+ [Browser Compatibility](#browser-compatibility)
+
+ [CI/CD Pipeline](#ci-cd-pipeline)
+
+ [Additional Remarks](#additional-remarks)
+
+---
 
 ## Tests
+
 ### 1. Fetch and Validate Matches
 #### Objective
-To ensure that matches displayed on the homepage can be accurately searched and validated in the search functionality.
+Ensure matches displayed on the homepage can be accurately searched and validated.
 
 #### Steps
-- Fetch match data from the homepage using the getMatches helper function.
-- Open the search modal for each fetched match.
-- Input the match name into the search field.
-- Validate that the search results contain relevant matches.
-- Close the search modal.
+1. Fetch match data using the `getMatches` helper function.
+2. Open the search modal and input match names.
+3. Validate that search results contain relevant matches.
+4. Close the search modal.
+
 #### Helpers Used
-- getMatches(page, limit, logger): Fetches match terms from the homepage.
-- testSearchTerm(page, term, logger): Inputs a term into the search field and validates the results.
+- `getMatches(page, limit, logger)`
+- `testSearchTerm(page, term, logger)`
+
 #### Known Issues
-The search functionality may fail to return results for some matches due to potential platform inconsistencies.
+- Inconsistencies in search results for certain matches.
+
+---
 
 ### 2. Fetch and Validate Leagues
 #### Objective
-To ensure that league names displayed on the homepage appear correctly in the search results.
+Ensure league names displayed on the homepage appear correctly in search results.
 
 #### Steps
-- Fetch league names from the homepage using the getLeagues helper function.
-- Open the search modal for each league name.
-- Input the league name into the search field.
-- Validate that the search results contain relevant leagues.
-- Close the search modal.
+1. Fetch league names using the `getLeagues` helper function.
+2. Open the search modal for each league name.
+3. Input league names into the search field.
+4. Validate that the search results contain relevant leagues.
+5. Close the search modal.
+
 #### Helpers Used
-- getLeagues(page, limit, logger): Fetches league names from the homepage.
-- testSearchTerm(page, term, logger): Inputs a term into the search field and validates the results.
+- `getLeagues(page, limit, logger)`
+- `testSearchTerm(page, term, logger)`
+
 #### Known Issues
-Some leagues, such as NBA, Ligue 1, and La Liga, do not appear in search results. This is a known bug with the platform.
-Only certain leagues, like Euroleague and Premier League, consistently pass the test.
+- Some leagues (e.g., NBA, Ligue 1, and La Liga) do not appear in search results due to platform bugs.
+- Only certain leagues, like Euroleague and Premier League, consistently pass the test.
+
+---
 
 ### 3. Betting
 #### Objective
-To ensure that betting for spotlight match and combobet is working.
+Validate betting functionality for spotlight matches and combobets.
 
 #### Steps
-- Goes to the main page
-- Select bet(s)
-- Checks if the betting amount input comes up
-- Insert the amount
-- Checks if the betslip comes up
-- Checks if the authentication modal comes up
+1. Go to the main page.
+2. Select bets for the spotlight or combobets.
+3. Check if the betting amount input field is displayed.
+4. Insert the amount and validate the betslip.
+5. Check if the authentication modal appears.
 
+---
 
-### Logger
-A custom logger that lets you log based on level. For example 2 is info which is meant for test environments and shows additional info that is good for testing purposes.
+## Logger
+The custom logger supports adjustable log levels:
+- `error`
+- `warn`
+- `info` (default for testing environments)
+- `debug`
 
-- error
-- warn
-- info
-- debug
-Adjust the log level in search.spec.js as needed:
+To adjust the log level, modify the configuration in `search.spec.js`.
 
-#### Known issues #2
-##### Platform bugs
-Some leagues like NBA, Ligue 1, and La Liga do not appear in search results. This is a platform-level bug.
+---
 
+## Known Issues
+### 1. Search Inconsistencies
+- Matches and leagues may not always appear in search results due to platform-level bugs.
 
-#### Known issues #3 
+### 2. League Results Missing
+- Some leagues (e.g., NBA, Ligue 1, and La Liga) do not appear in search results.
 
-I built a CI/CD pipeline and tested it many times, but I couldn't find a workaround for the location restriction that is imposed on epicbet. See the picture below. In essence the tests should run on the pipeline if that is bypassed.
+### 3. Location Restriction
+- Tests fail to run in CI/CD due to geographical restrictions on the EpicBet platform.
 
 ![alt text](image.png)
 
+---
 
+## Browser Compatibility
+- **Chromium**: Best performance.
+- **WebKit**: Increased rendering times; doubled timeout values for stability.
+- **Mozilla**: Moderate performance.
 
-#### Additional remarks
+---
 
-I tested with chromium, webkit and mozilla and the increased timeouts that I have done for some tests are purely because of webkit. It rendered the page for so long I doubled the timeout. Else I think it should work. It worked best on chromium.
+## CI/CD Pipeline
+The test suite integrates seamlessly with a GitHub Actions pipeline:
+1. Installs Playwright dependencies and browsers.
+2. Executes tests only for changed files.
+3. Uploads test results in JUnit, JSON, and CTRF formats.
+4. Notifies committers of test outcomes.
 
-Please note that this is a basic test suite and does not cover all the edge cases and possibilities. It's recommended to run the tests in different browsers and environments to ensure compatibility.
+---
+
+## Additional Remarks
+- The current test suite is basic and focuses on core functionalities. Additional edge cases and exploratory testing are recommended.
+- Tests were executed on multiple browsers to ensure compatibility and reliability.
 
