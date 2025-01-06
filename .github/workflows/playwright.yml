@@ -11,24 +11,27 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.34.3-jammy
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
-
-      - name: Build Docker Image
-        run: |
-          docker build -t playwright-tests:latest .
-
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - name: Detect Changed Files
         id: changes
         run: |
           git diff --diff-filter=ACMRT --name-only ${{ github.event.before }} ${{ github.sha }} > changed-files.txt
           echo "Changed files:"
           cat changed-files.txt
-
-      - name: Run Playwright Tests in Docker Container
+      - name: Run Playwright tests for changed files
+        if: success()
         run: |
           CHANGED_TESTS=$(grep -E '^tests/.*\.spec\.(js|ts)$' changed-files.txt || true)
 
@@ -40,54 +43,40 @@ jobs:
           echo "Running tests for changed files:"
           echo "$CHANGED_TESTS"
 
-          docker run --rm \
-          -e CI=true \
-            -v ${{ github.workspace }}:/app \
-            -w /app \
-            playwright-tests:latest \
-            sh -c "npx playwright install --with-deps && npx playwright test $CHANGED_TESTS"
-
-
+          npx playwright test $CHANGED_TESTS
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-
       - name: Upload JUnit Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: junit-results
           path: results.xml
-
       - name: Upload JSON Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: json-results
           path: results.json
-
       - name: Upload CTRF JSON Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ctrf-json-results
           path: ctrf/ctrf-report.json
-
       - name: Publish Test Summary Results
         if: always()
         run: npx github-actions-ctrf ctrf/ctrf-report.json
-
       - name: Generate Summary Table
         if: always()
         run: node dist/core/cli.js summary ctrf/ctrf-report.json --title "Summary table"
-
       - name: Generate Default Tables
         if: always()
         run: node dist/core/cli.js ctrf/ctrf-report.json --title "Default tables"
-
       - name: Notify Committer on Success
         if: success()
         uses: actions/github-script@v6
@@ -101,7 +90,6 @@ jobs:
               commit_sha: context.sha,
               body: `\u2705 **Playwright Tests Passed**\n\nHi @${pusher},\n\nAll tests passed successfully. You can view the [Workflow Run](${runUrl}) for details.`
             });
-
       - name: Notify Committer on Failure
         if: failure()
         uses: actions/github-script@v6
@@ -114,3 +102,4 @@ jobs:
               repo: context.repo.repo,
               commit_sha: context.sha,
               body: `\u1F6A8 **Playwright Tests Failed**\n\nHi @${pusher},\n\nSome tests failed for the files you pushed. Please review the [Workflow Run](${runUrl}).`
+            });
