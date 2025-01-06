@@ -54,6 +54,15 @@ Adjust the log level in search.spec.js as needed:
 ##### Platform bugs
 Some leagues like NBA, Ligue 1, and La Liga do not appear in search results. This is a platform-level bug.
 
+
+#### Known issues #3 
+
+I built a CI/CD pipeline and tested it many times, but I couldn't find a workaround for the location restriction that is imposed on epicbet. See the picture below. In essence the tests should run on the pipeline if that is bypassed.
+
+![alt text](image.png)
+
+
+
 #### Additional remarks
 
 I tested with chromium, webkit and mozilla and the increased timeouts that I have done for some tests are purely because of webkit. It rendered the page for so long I doubled the timeout. Else I think it should work. It worked best on chromium.

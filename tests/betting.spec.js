@@ -13,11 +13,17 @@ test.describe('Epicbet search functionality tests', () => {
         logger = new Logger('info');
     });
     // TEST23
-    test.beforeEach(async ({ page }) => {
-        mainPage = new Mainpage(page, logger);
+    test.beforeEach(async ({ browser, page }) => {
+        const context = await browser.newContext({
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        });
+        const customPage = await context.newPage();
+
+        mainPage = new Mainpage(customPage, logger);
         await mainPage.navigateTo('https://epicbet.com/en/');
-        await page.waitForLoadState('domcontentloaded');
+        await customPage.waitForLoadState('domcontentloaded');
     });
+
 
     test('Spotlight bet testing', async ({ page }, testInfo) => {
         testInfo.setTimeout(60000)
