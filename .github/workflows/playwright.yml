@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
@@ -27,9 +27,8 @@ jobs:
       - name: Detect Changed Files
         id: changes
         run: |
+          git fetch --unshallow
           git diff --diff-filter=ACMRT --name-only ${{ github.event.before }} ${{ github.sha }} > changed-files.txt
-          echo "Changed files:"
-          cat changed-files.txt
       - name: Run Playwright tests for changed files
         if: success()
         run: |
