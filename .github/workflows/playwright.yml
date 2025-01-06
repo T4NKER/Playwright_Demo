@@ -46,6 +46,7 @@ jobs:
 
           npx playwright test $CHANGED_TESTS
       - name: Upload Playwright Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
