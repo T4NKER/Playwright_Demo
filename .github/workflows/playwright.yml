@@ -54,17 +54,19 @@ jobs:
       with:
         name: junit-results
         path: results.xml
+    - name: Publish Test Results
+      if: always()
+      uses: dorny/test-reporter@v1
+      with:
+        name: Playwright Tests
+        path: results.xml
+        reporter: jest-junit
     - name: Upload JSON Test Results
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: json-results
         path: results.json
-    - name: Convert JSON to CTRF
-      run: node convert-to-ctrf.js
-    - name: Generate JSON Report
-      run: npx github-actions-ctrf ctrf-results.json
-      if: always()
     - name: Notify Committer on Success
       if: success()
       uses: actions/github-script@v6
