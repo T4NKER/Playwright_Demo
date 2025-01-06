@@ -60,8 +60,10 @@ jobs:
       with:
         name: json-results
         path: results.json
+    - name: Convert JSON to CTRF
+      run: node convert-to-ctrf.js
     - name: Generate JSON Report
-      run: npx github-actions-ctrf results.json
+      run: npx github-actions-ctrf ctrf-results.json
       if: always()
     - name: Notify Committer on Success
       if: success()
