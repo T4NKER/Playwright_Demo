@@ -24,7 +24,7 @@ export async function getMatches(page, limit = 5, logger = null) {
 
             if (matchText) {
                 const beforeTime = matchText.split(/\d{1,2}:\d{2}/)[0]; 
-                logger?.debug(`Extracted part before time: ${beforeTime}`);
+                logger?.info(`Extracted part before time: ${beforeTime}`);
 
                 const teamRegex = /[A-Z]{2,}(?=[A-Z][a-z])|[A-Z][a-z]+(?:\s[A-Z][a-z]+)?/g;
                 const teams = beforeTime.match(teamRegex) || [];
@@ -32,7 +32,7 @@ export async function getMatches(page, limit = 5, logger = null) {
                 if (teams.length >= 2) {
                     const team1 = teams[0].trim();
                     const team2 = teams[1].trim();
-                    logger?.debug(`Extracted teams: ${team1}, ${team2}`);
+                    logger?.info(`Extracted teams: ${team1}, ${team2}`);
                     searchTerms.push(team1, team2);
                 }
             }
@@ -74,7 +74,7 @@ export async function testSearchTerm(page, term, logger, expectMatches = true) {
 
         const matchContainers = searchContainer.getByTestId('match-container');
         if (expectMatches) {
-            logger?.debug(`Waiting for a match container with the term "${term}"...`);
+            logger?.info(`Waiting for a match container with the term "${term}"...`);
 
             const matchingContainer = matchContainers.filter({
                 hasText: term, 
@@ -85,18 +85,18 @@ export async function testSearchTerm(page, term, logger, expectMatches = true) {
             });
 
             const matchCount = await matchContainers.count();
-            logger?.debug(`Match count for "${term}": ${matchCount}`);
+            logger?.info(`Match count for "${term}": ${matchCount}`);
             expect(matchCount).toBeGreaterThan(0);
 
             const firstMatchText = await matchingContainer.first().textContent();
             logger?.info(`First match for "${term}": ${firstMatchText}`);
             expect(firstMatchText).toContain(term);
         } else {
-            logger?.debug(`Waiting for previous search results to clear...`);
+            logger?.info(`Waiting for previous search results to clear...`);
 
             await expect(matchContainers).toHaveCount(0, { timeout: 10000 });
 
-            logger?.debug(`Checking that no matches are found for term "${term}"...`);
+            logger?.info(`Checking that no matches are found for term "${term}"...`);
             const matchCount = await matchContainers.count();
             expect(matchCount).toBe(0);
             logger?.info(`No matches found for term "${term}", as expected.`);

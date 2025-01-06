@@ -1,33 +1,33 @@
 import { expect } from '@playwright/test'
 
-export async function interactWithSpotlight(page, logger) {
-    logger?.debug('Searching for spotlight...');
+export async function betWithSpotlight(page, logger) {
+    logger?.info('Searching for spotlight...');
 
     const spotlight = page.getByTestId('spotlight-container');
     await expect(spotlight).toBeVisible();
     await spotlight.scrollIntoViewIfNeeded();
 
-    logger?.debug('Searching for bet button...');
+    logger?.info('Searching for bet button...');
     const betButton = spotlight.getByTestId('outcome-button').first();
     await betButton.hover();
     await expect(betButton).toBeVisible();
     await expect(betButton).toBeEnabled();
     await betButton.click();
 
-    logger?.debug('Bet button clicked');
+    logger?.info('Bet button clicked');
 }
 
-export async function handleQuickBet(page, logger) {
-    logger?.debug('Searching for bet container...');
+export async function handleQuickBet(page, logger, amount) {
+    logger?.info('Searching for bet container...');
     const quickbet = page.getByTestId('quickbet-container');
     await expect(quickbet).toBeVisible();
 
-    logger?.debug('Searching for bet amount input...');
+    logger?.info('Searching for bet amount input...');
     const betAmountInput = quickbet.getByTestId('stake-input');
     await expect(betAmountInput).toBeVisible();
-    await betAmountInput.fill('10');
+    await betAmountInput.fill(amount);
 
-    logger?.debug('Bet amount input filled');
+    logger?.info('Bet amount input filled');
     const betButtonInQuickbet = quickbet.getByTestId('place-bet-button');
     await expect(betButtonInQuickbet).toBeVisible();
     await betButtonInQuickbet.click();
@@ -40,7 +40,7 @@ export async function handleMultipleBets(page, logger, term) {
         const matchContainer = page.getByTestId('match-container').filter({ hasText: term });
         await expect(matchContainer).toBeVisible();
         await matchContainer.scrollIntoViewIfNeeded();
-        logger?.debug(`Found match container for term: ${term}`);
+        logger?.info(`Found match container for term: ${term}`);
 
         const outcomeButton = matchContainer.getByTestId('outcome-button').first();
         await expect(outcomeButton).toBeVisible();
@@ -54,14 +54,14 @@ export async function handleMultipleBets(page, logger, term) {
 }
 
 export async function removeComboBet(page, logger, terms) {
-    logger?.debug('Searching for bet slip floater...');
+    logger?.info('Searching for bet slip floater...');
     const betSlip = page.getByTestId('betslip-floater');
     await expect(betSlip).toBeVisible();
     await betSlip.click();
 
     const betSlipContainer = page.getByTestId('betslip-container');
     await expect(betSlipContainer).toBeVisible();
-    logger?.debug('Bet slip floater opened');
+    logger?.info('Bet slip floater opened');
 
     for (const term of terms) {
         const betSlipSelection = betSlipContainer.getByTestId('betslip-selection').filter({ hasText: term })

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { Mainpage } from '../helpers/mainpageHelper';
 import { getMatches } from '../helpers/searchHelper';
-import { interactWithSpotlight, handleQuickBet, handleMultipleBets, removeComboBet } from '../helpers/bettingHelper';
+import { betWithSpotlight, handleQuickBet, handleMultipleBets, removeComboBet } from '../helpers/bettingHelper';
 import { Logger } from '../utils/logger';
 import { timeout } from '../playwright.config';
 
@@ -10,7 +10,7 @@ test.describe('Epicbet search functionality tests', () => {
     let logger;
 
     test.beforeAll(() => {
-        logger = new Logger('debug');
+        logger = new Logger('info');
     });
 
     test.beforeEach(async ({ page }) => {
@@ -23,22 +23,22 @@ test.describe('Epicbet search functionality tests', () => {
         testInfo.setTimeout(60000)
         logger?.info('Spotlight bet testing...');
 
-        await interactWithSpotlight(page, logger);
-        await handleQuickBet(page, logger);
+        await betWithSpotlight(page, logger);
+        await handleQuickBet(page, logger, '10');
 
-        logger?.debug('Waiting for authentication modal display');
+        logger?.info('Waiting for authentication modal display');
         const authModal = page.getByTestId('auth-modal');
         await expect(authModal).toBeVisible();
 
-        logger?.debug('Closing authentication modal display');
+        logger?.info('Closing authentication modal display');
         const closeModalButton = page.getByTestId('close-modal');
         await expect(closeModalButton).toBeVisible();
         await closeModalButton.click();
 
-        logger?.debug('Waiting for authentication modal to disappear');
+        logger?.info('Waiting for authentication modal to disappear');
         await expect(authModal).not.toBeVisible();
 
-        logger?.debug('Searching for bet slip floater...');
+        logger?.info('Searching for bet slip floater...');
         const betSlip = page.getByTestId('betslip-floater');
         await expect(betSlip).toBeVisible();
 
@@ -53,7 +53,7 @@ test.describe('Epicbet search functionality tests', () => {
         logger?.info(`Extracted search terms: ${dynamicSearchTerms}`);
 
         const searchTermsForBets = dynamicSearchTerms.filter((_, index) => index % 2 === 0);
-        logger?.debug(`Search terms for bets: ${searchTermsForBets}`);
+        logger?.info(`Search terms for bets: ${searchTermsForBets}`);
 
         for (const term of searchTermsForBets) {
             await handleMultipleBets(page, logger, term);

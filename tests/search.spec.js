@@ -8,7 +8,7 @@ test.describe('Epicbet search functionality tests', () => {
     let logger;
 
     test.beforeAll(() => {
-        logger = new Logger('debug');
+        logger = new Logger('info');
     });
     // added comment for test
     test.beforeEach(async ({ page }) => {
@@ -19,22 +19,26 @@ test.describe('Epicbet search functionality tests', () => {
 
     test('Fetch and validate matches', async ({ page }, testInfo) => {
         testInfo.setTimeout(120000);
+
         const dynamicSearchTerms = await getMatches(page, 5, logger);
+
+        await mainPage.openSearchModal();
+
         for (const term of dynamicSearchTerms) {
-            await mainPage.openSearchModal();
             await testSearchTerm(page, term, logger);
-            await mainPage.closeSearchModal();
         }
     });
 
     test.fail('Fetch and validate leagues', async ({ page }, testInfo) => {
-        test.info().annotations.push({bug: 'There is a bug where it doesnt find leagues that it gets from the front page by search.' });
+        test.info().annotations.push({ bug: 'There is a bug where it doesnt find leagues that it gets from the front page by search.' });
         testInfo.setTimeout(60000);
+
         const leagueNames = await getLeagues(page, 5, logger);
+
+        await mainPage.openSearchModal();
+
         for (const term of leagueNames) {
-            await mainPage.openSearchModal();
             await testSearchTerm(page, term, logger);
-            await mainPage.closeSearchModal();
         }
     });
 
