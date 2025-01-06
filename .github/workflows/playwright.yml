@@ -7,38 +7,45 @@ on:
 
 permissions:
   contents: write
-
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
       - name: Build Docker Image
         run: |
           docker build -t playwright-tests:latest .
-      
-      - name: Run Tests in Docker Container
+
+      - name: Detect Changed Files
+        id: changes
         run: |
+          git diff --diff-filter=ACMRT --name-only ${{ github.event.before }} ${{ github.sha }} > changed-files.txt
+          echo "Changed files:"
+          cat changed-files.txt
+
+      - name: Run Playwright Tests in Docker Container
+        run: |
+          CHANGED_TESTS=$(grep -E '^tests/.*\.spec\.(js|ts)$' changed-files.txt || true)
+
+          if [ -z "$CHANGED_TESTS" ]; then
+            echo "No changed test files. Skipping tests."
+            exit 0
+          fi
+
+          echo "Running tests for changed files:"
+          echo "$CHANGED_TESTS"
+
           docker run --rm \
             -e CI=true \
-            -v ${{ github.workspace }}:/workspace \
-            -w /workspace \
+            -v ${{ github.workspace }}:/app \
+            -w /app \
             playwright-tests:latest \
-            bash -c "
-              npm ci &&
-              npx playwright install --with-deps &&
-              git diff --diff-filter=ACMRT --name-only ${{ github.event.before }} ${{ github.sha }} > changed-files.txt &&
-              CHANGED_TESTS=$(grep -E '^tests/.*\.spec\.(js|ts)$' changed-files.txt || true) &&
-              if [ -z \"$CHANGED_TESTS\" ]; then
-                echo 'No changed test files. Skipping tests.';
-                exit 0;
-              fi &&
-              npx playwright test $CHANGED_TESTS
-            "
+            bash -c "npx playwright install --with-deps && npx playwright test $CHANGED_TESTS"
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
@@ -106,4 +113,3 @@ jobs:
               repo: context.repo.repo,
               commit_sha: context.sha,
               body: `\u1F6A8 **Playwright Tests Failed**\n\nHi @${pusher},\n\nSome tests failed for the files you pushed. Please review the [Workflow Run](${runUrl}).`
-            });
