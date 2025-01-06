@@ -56,33 +56,22 @@ jobs:
         name: junit-results
         path: results.xml
 
-    - name: Verify and Debug results.xml
-      if: always()
-      run: |
-        echo "Checking if results.xml exists:"
-        if [ -f results.xml ]; then
-          echo "results.xml found."
-          echo "Checking permissions:"
-          ls -l results.xml
-        else
-          echo "results.xml not found!"
-          echo "Listing current directory structure:"
-          ls -R
-          exit 1
-        fi
-
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-        junit_files: results.xml
-
     - name: Upload JSON Test Results
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: json-results
         path: results.json
+
+    - name: Upload CTRF JSON Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ctrf-json-results
+        path: ctrf/ctrf-report.json
+
+    - name: Publish Test Summary Results
+      run: npx github-actions-ctrf ctrf/ctrf-report.json
 
     - name: Notify Committer on Success
       if: success()
