@@ -6,7 +6,7 @@ import { Logger } from '../utils/logger';
 test.describe('Epicbet search functionality tests', () => {
     let mainPage;
     let logger;
-
+    // test comment
     test.beforeAll(() => {
         logger = new Logger('info');
     });
