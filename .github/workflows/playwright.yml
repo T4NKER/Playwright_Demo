@@ -57,6 +57,7 @@ jobs:
         path: results.xml
 
     - name: Verify and Debug results.xml
+      if: always()
       run: |
         echo "Checking if results.xml exists:"
         if [ -f results.xml ]; then
