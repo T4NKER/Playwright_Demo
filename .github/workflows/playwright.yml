@@ -22,27 +22,25 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Detect changed files
+    - name: Detect Changed Files
       id: changes
       run: |
-        git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed-files.txt
+        git diff --diff-filter=ACMRT --name-only ${{ github.event.before }} ${{ github.sha }} > changed-files.txt
         echo "Changed files:"
         cat changed-files.txt
     - name: Run Playwright tests for changed files
       if: success()
       run: |
-        # Get the list of changed test files
-        CHANGED_TESTS=$(grep '^tests/.*\.spec\.js$' changed-files.txt || true)
-        
+        CHANGED_TESTS=$(grep -E '^tests/.*\.spec\.(js|ts)$' changed-files.txt || true)
+    
         if [ -z "$CHANGED_TESTS" ]; then
           echo "No changed test files. Skipping tests."
           exit 0
         fi
-        
+
         echo "Running tests for changed files:"
         echo "$CHANGED_TESTS"
-        
-        # Run Playwright tests for the changed files
+
         npx playwright test $CHANGED_TESTS
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
@@ -50,6 +48,39 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+    - name: Upload JUnit Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: junit-results
+        path: results.xml
+    - name: Publish Test Results
+      if: always()
+      uses: dorny/test-reporter@v1
+      with:
+        name: Playwright Tests
+        path: results.xml
+        reporter: junit
+    - name: Upload JSON Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: json-results
+        path: results.json
+    - name: Notify Committer on Success
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const pusher = context.payload.pusher.name;
+          const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+      
+          await github.rest.repos.createCommitComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            commit_sha: context.sha,
+            body: `✅ **Playwright Tests Passed**\n\nHi @${pusher},\n\nAll tests passed successfully. You can view the [Workflow Run](${runUrl}) for details.`
+          });
     - name: Notify Committer on Failure
       if: failure()
       uses: actions/github-script@v6
