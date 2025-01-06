@@ -1,9 +1,9 @@
 # Test Suite Overview
 The test suite focuses on two key functionalities:
 
-Fetching and validating matches displayed on the homepage.
-Fetching and validating league names and ensuring their presence in search results.
-Each test is described in detail below.
+Search functionality based on the matches and leagues and terms that should fail to return results.
+
+Betting functionality for the spotlight bet and the combobet.
 
 ## Tests
 ### 1. Fetch and Validate Matches
@@ -39,7 +39,18 @@ To ensure that league names displayed on the homepage appear correctly in the se
 Some leagues, such as NBA, Ligue 1, and La Liga, do not appear in search results. This is a known bug with the platform.
 Only certain leagues, like Euroleague and Premier League, consistently pass the test.
 
-Regarding the CI/CD the test suite does not run because it says that the region was blocked. This is probably due to Github Actions region and I didn't find a valid solution for that. 
+### 3. Betting
+#### Objective
+To ensure that betting for spotlight match and combobet is working.
+
+#### Steps
+- Goes to the main page
+- Select bet(s)
+- Checks if the betting amount input comes up
+- Insert the amount
+- Checks if the betslip comes up
+- Checks if the authentication modal comes up
+
 
 ### Logger
 A custom logger that lets you log based on level. For example 2 is info which is meant for test environments and shows additional info that is good for testing purposes.
