@@ -48,25 +48,27 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+
     - name: Upload JUnit Test Results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: junit-results
         path: results.xml
+
     - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
-      uses: dorny/test-reporter@v1
       with:
-        name: Playwright Tests
-        path: results.xml
-        reporter: jest-junit
+        junit_files: results.xml
+
     - name: Upload JSON Test Results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: json-results
         path: results.json
+
     - name: Notify Committer on Success
       if: success()
       uses: actions/github-script@v6
