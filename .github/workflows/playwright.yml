@@ -54,19 +54,15 @@ jobs:
       with:
         name: junit-results
         path: results.xml
-    - name: Publish Test Results
-      if: always()
-      uses: dorny/test-reporter@v1
-      with:
-        name: Playwright Tests
-        path: results.xml
-        reporter: junit-xml
     - name: Upload JSON Test Results
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: json-results
         path: results.json
+    - name: Generate JSON Report
+      run: npx github-actions-ctrf results.json
+      if: always()
     - name: Notify Committer on Success
       if: success()
       uses: actions/github-script@v6
@@ -88,13 +84,12 @@ jobs:
         script: |
            const pusher = context.payload.pusher.name;
            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-           const reportPath = `https://github.com/${context.repo.owner}/${context.repo.repo}/suites/${context.runId}/artifacts`;
 
            await github.rest.repos.createCommitComment({
              owner: context.repo.owner,
              repo: context.repo.repo,
              commit_sha: context.sha,
-             body: `🚨 **Playwright Tests Failed**\n\nHi @${pusher},\n\nSome tests failed for the files you pushed. Please review the [Playwright Report](${reportPath}) or the [Workflow Run](${runUrl}).`
+             body: `🚨 **Playwright Tests Failed**\n\nHi @${pusher},\n\nSome tests failed for the files you pushed. Please review the [Workflow Run](${runUrl}).`
            });
 
 
