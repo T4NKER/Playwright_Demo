@@ -73,6 +73,11 @@ jobs:
     - name: Publish Test Summary Results
       run: npx github-actions-ctrf ctrf/ctrf-report.json
 
+    - name: Summary table
+        run: node dist/core/cli.js summary ctrf-reports/ctrf-report.json --title "Summary table"
+      - name: Default tables
+        run: node dist/core/cli.js ctrf-reports/ctrf-report.json --title "Default tables"
+
     - name: Notify Committer on Success
       if: success()
       uses: actions/github-script@v6
