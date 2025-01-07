@@ -25,7 +25,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Mark Git Directory as Safe
-        run: git config --global --add safe.directory /__w/Playwright_Demo/Playwright_Demo
+        run: git config --global --add safe.directory /__w/sisu_playwright/sisu_playwright
       - name: Detect Changed Files
         id: changes
         run: |
@@ -44,7 +44,7 @@ jobs:
           echo "Running tests for changed files:"
           echo "$CHANGED_TESTS"
 
-          npx playwright test $CHANGED_TESTS
+          npx playwright test $CHANGED_TESTS --config=playwright.config.ci.js
       - name: Upload Playwright Report
         if: always()
         uses: actions/upload-artifact@v4
