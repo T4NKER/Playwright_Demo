@@ -21,7 +21,7 @@ export async function getMatches(page, limit = 5, logger = null) {
         for (let i = 0; i < Math.min(limit, homepageMatchCount); i++) {
             const matchContainer = homepageMatchContainers.nth(i);
             const matchText = await matchContainer.textContent();
-
+            // I used regex matching here to get the two teams from the whole string.
             if (matchText) {
                 const beforeTime = matchText.split(/\d{1,2}:\d{2}/)[0]; 
                 logger?.info(`Extracted part before time: ${beforeTime}`);

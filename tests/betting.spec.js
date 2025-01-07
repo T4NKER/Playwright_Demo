@@ -12,7 +12,7 @@ test.describe('Epicbet search functionality tests', () => {
     test.beforeAll(() => {
         logger = new Logger('info');
     });
-    // TEST2
+
     test.beforeEach(async ({ page }) => {
         mainPage = new Mainpage(page, logger);
         await mainPage.navigateTo('https://epicbet.com/en/');
@@ -21,7 +21,7 @@ test.describe('Epicbet search functionality tests', () => {
 
     test('Spotlight bet testing', async ({ page }, testInfo) => {
         testInfo.setTimeout(60000)
-        logger?.info('Spotlight bet testing...');
+        logger?.info('Starting spotlight bet test...');
 
         await betWithSpotlight(page, logger);
         await handleQuickBet(page, logger, '10');
@@ -61,7 +61,7 @@ test.describe('Epicbet search functionality tests', () => {
 
         await removeComboBet(page, logger, searchTermsForBets)
 
-        logger?.info('Combobet test completed successfully.');
+        logger?.info('Combobet tested.');
     });
 
 });
