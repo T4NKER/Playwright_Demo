@@ -17,6 +17,16 @@ This test suite automates key functionalities of the EpicBet platform using Play
 
 ---
 
+## To run
+
+You need playwright installed. To do this, use
+
+```
+npm install --save-dev @playwright/test
+
+npx playwright test
+```
+
 ## Tests
 
 ### 1. Validate Search Functionality with Dynamic Match Terms
