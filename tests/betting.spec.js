@@ -5,10 +5,12 @@ import { betWithSpotlight, handleQuickBet, handleMultipleBets, removeComboBet } 
 import { Logger } from '../utils/logger';
 import { timeout } from '../playwright.config';
 
+
+// Final test comment
 test.describe('Epicbet search functionality tests', () => {
     let mainPage;
     let logger;
-
+    
     test.beforeAll(() => {
         logger = new Logger('info');
     });
