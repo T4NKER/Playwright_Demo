@@ -82,18 +82,6 @@ Ensure invalid search terms (e.g., special characters, SQL injections) do not re
 
 ---
 
-### 4. Betting
-#### Objective
-Ensure betting works for both spotlight and combobet.
-
-#### Steps
-1. Go to the main page.
-2. Look for the spotlight bet or match-containers.
-3. Interact with the containers to bet on matches.
-4. Verify authentication modal appearance or the existence of the combobets in the bet window.
-
----
-
 
 ### 4. Betting
 #### Objective
