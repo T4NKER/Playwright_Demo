@@ -115,8 +115,9 @@ A custom logger is used for debugging and tracking test execution flow:
    - Popular leagues like NBA and La Liga occasionally fail to appear in search results.
 
 2. **Location Restrictions**:
-   - Tests may fail to run in CI/CD due to geographical restrictions on the EpicBet platform, but the workflow itself works.
+   - Tests may fail to run in CI/CD due to geographical restrictions on the EpicBet platform, but the workflow itself works. See the picture below.
 
+![Location Restriction Example](./image.png)
 ---
 
 ## Browser Compatibility
