@@ -5,20 +5,29 @@ import { betWithSpotlight, handleQuickBet, handleMultipleBets, removeComboBet } 
 import { Logger } from '../utils/logger';
 import { timeout } from '../playwright.config';
 
-
-// Final test comment
 test.describe('Epicbet search functionality tests', () => {
     let mainPage;
     let logger;
-    
+
     test.beforeAll(() => {
         logger = new Logger('info');
     });
 
-    test.beforeEach(async ({ page }) => {
-        mainPage = new Mainpage(page, logger);
-        await mainPage.navigateTo('https://epicbet.com/en/');
-        await page.waitForLoadState('domcontentloaded');
+    test.beforeEach(async ({ browser }) => {
+        const context = await browser.newContext();
+        const page = await context.newPage();
+
+        await Mainpage.loadCookies(context);
+        const cookiesValid = await Mainpage.areCookiesValid(context);
+
+        mainPage = new Mainpage(page);
+        if (!cookiesValid) {
+            console.log('Cookies expired or missing. Proceeding without cookies.');
+        }
+
+        await mainPage.navigateTo('https://epicbet.com/en/', false);
+
+        await mainPage.saveCookies();
     });
 
     test('Spotlight bet testing', async ({ page }, testInfo) => {
@@ -48,7 +57,7 @@ test.describe('Epicbet search functionality tests', () => {
     });
 
     test('Make combobet', async ({ page }, testInfo) => {
-        testInfo.setTimeout(120000); 
+        testInfo.setTimeout(120000);
         logger?.info('Starting combobet test...');
 
         const dynamicSearchTerms = await getMatches(page, 5, logger);

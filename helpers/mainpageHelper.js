@@ -25,12 +25,42 @@ export class Mainpage {
         this.log('Search modal opened.');
     }
 
+    async acceptCookies() {
+        this.log('Accepting cookies...');
+        const acceptCookieButton = this.page.locator('#CybotCookiebotDialogBodyButtonAccept');
+        await acceptCookieButton.waitFor({ state: 'visible', timeout: 10000 });
+        await acceptCookieButton.click();
+        this.log('Cookies accepted.');
+    }
+
     async refuseCookies() {
         this.log('Refusing cookies...');
         const refuseCookieButton = this.page.locator('#CybotCookiebotDialogBodyButtonDecline');
-        await refuseCookieButton.waitFor({ state: 'visible' }); 
-        await refuseCookieButton.click(); 
+        await refuseCookieButton.waitFor({ state: 'visible', timeout: 10000 });
+        await refuseCookieButton.click();
         this.log('Cookies refused.');
+    }
+
+    async saveCookies() {
+        const cookies = await this.page.context().cookies();
+        await fs.writeFile(COOKIES_PATH, JSON.stringify(cookies, null, 2));
+        this.log('Cookies saved to file.');
+    }
+
+    static async loadCookies(context) {
+        try {
+            const cookies = JSON.parse(await fs.readFile(COOKIES_PATH, 'utf8'));
+            await context.addCookies(cookies);
+            console.log('Cookies loaded from file.');
+        } catch (error) {
+            console.log('No cookies file found or cookies invalid. Skipping cookie loading.');
+        }
+    }
+
+    static async areCookiesValid(context) {
+        const cookies = await context.cookies();
+        const now = Date.now() / 1000; // Current time in seconds
+        return cookies.every(cookie => cookie.expires === -1 || cookie.expires > now);
     }
 
     async closeSearchModal() {
@@ -50,11 +80,17 @@ export class Mainpage {
         this.log('Match containers are visible.');
     }
 
-    async navigateTo(pageUrl) {
+    async navigateTo(pageUrl, acceptCookies = false) {
         try {
             this.log(`Navigating to ${pageUrl}`);
             await this.page.goto(pageUrl);
-            await this.refuseCookies();
+
+            if (acceptCookies) {
+                await this.acceptCookies();
+            } else {
+                await this.refuseCookies();
+            }
+
             await this.waitForMatchContainers();
         } catch (error) {
             this.log(`Error navigating to ${pageUrl}: ${error.message}`);
