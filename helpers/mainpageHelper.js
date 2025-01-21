@@ -1,5 +1,8 @@
 import { logInfo } from '../utils/logger';
 import { expect } from '@playwright/test';
+import fs from 'fs/promises';
+
+const COOKIES_PATH = "helpers/cookies/cookies.json";
 
 export class Mainpage {
     constructor(page, logger = null) {
@@ -43,7 +46,7 @@ export class Mainpage {
 
     async saveCookies() {
         const cookies = await this.page.context().cookies();
-        await fs.writeFile(COOKIES_PATH, JSON.stringify(cookies, null, 2));
+        await fs.writeFile(COOKIES_PATH, JSON.stringify(cookies, null, 2)); // Save cookies to file
         this.log('Cookies saved to file.');
     }
 
@@ -80,15 +83,17 @@ export class Mainpage {
         this.log('Match containers are visible.');
     }
 
-    async navigateTo(pageUrl, acceptCookies = false) {
+    async navigateTo(pageUrl, acceptCookies = null) {
         try {
             this.log(`Navigating to ${pageUrl}`);
             await this.page.goto(pageUrl);
 
-            if (acceptCookies) {
+            if (acceptCookies === true) {
                 await this.acceptCookies();
-            } else {
+            } else if (acceptCookies === false){
                 await this.refuseCookies();
+            } else {
+                this.log('Cookies have already been inserted')
             }
 
             await this.waitForMatchContainers();

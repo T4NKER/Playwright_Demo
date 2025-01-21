@@ -3,7 +3,8 @@ import { Mainpage } from '../helpers/mainpageHelper';
 import { getMatches } from '../helpers/searchHelper';
 import { betWithSpotlight, handleQuickBet, handleMultipleBets, removeComboBet } from '../helpers/bettingHelper';
 import { Logger } from '../utils/logger';
-import { timeout } from '../playwright.config';
+import { timeout } from '../playwright.config'; 
+import 'fs';
 
 test.describe('Epicbet search functionality tests', () => {
     let mainPage;
@@ -13,21 +14,21 @@ test.describe('Epicbet search functionality tests', () => {
         logger = new Logger('info');
     });
 
-    test.beforeEach(async ({ browser }) => {
-        const context = await browser.newContext();
-        const page = await context.newPage();
+    test.beforeEach(async ({ page }) => {
+        const context = page.context(); // Use the existing page's context
 
         await Mainpage.loadCookies(context);
         const cookiesValid = await Mainpage.areCookiesValid(context);
 
-        mainPage = new Mainpage(page);
+        mainPage = new Mainpage(page, logger); // Use the provided page
         if (!cookiesValid) {
-            console.log('Cookies expired or missing. Proceeding without cookies.');
+            logger.info('Cookies expired or missing. Proceeding without cookies.');
+            await mainPage.navigateTo('https://epicbet.com/en/', false);
+            await mainPage.saveCookies();
+        } else {
+            logger.info('Cookies loaded and valid. Skipping cookie banner.');
+            await mainPage.navigateTo('https://epicbet.com/en/', null);
         }
-
-        await mainPage.navigateTo('https://epicbet.com/en/', false);
-
-        await mainPage.saveCookies();
     });
 
     test('Spotlight bet testing', async ({ page }, testInfo) => {
